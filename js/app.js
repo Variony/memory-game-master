@@ -1,6 +1,6 @@
 //Randomize array
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -16,12 +16,12 @@ function shuffle(array) {
 //Append pics randomly
 function shuffleCards(){
     $('.card').empty();
-    var cards = ['fa fa-diamond', 'fa fa-paper-plane-o', 'fa fa-anchor'
+    let cards = ['fa fa-diamond', 'fa fa-paper-plane-o', 'fa fa-anchor'
     , 'fa fa-bolt', 'fa fa-cube', 'fa fa-leaf', 'fa fa-bicycle', 'fa fa-bomb', 'fa fa-diamond', 'fa fa-paper-plane-o', 'fa fa-anchor'
         , 'fa fa-bolt', 'fa fa-cube', 'fa fa-leaf', 'fa fa-bicycle', 'fa fa-bomb'
     ];
     shuffle(cards);
-    var  cardsObject= $('.card');
+    const  cardsObject= $('.card');
     for(let i = 0; i < cards.length; i ++){
         $(cardsObject[i]).append('<i></i>');
         $(cardsObject[i]).children().addClass(cards[i]);
@@ -35,8 +35,8 @@ function displayPic(currentPic){
 
 //add the former card information into list
 function storeFormer(former, currentPic){
-    var index = currentPic.index();
-    var attr = currentPic.children().attr('class');
+    const index = currentPic.index();
+    const attr = currentPic.children().attr('class');
     former.push(index, attr);
 }
 
@@ -64,14 +64,14 @@ function success(){
 
 //Adjust stars according to moves
 function removeStar(){
-    var stars = $('i.fa.fa-star');
+    const stars = $('i.fa.fa-star');
     $(stars[--star]).hide();
 }
 
 //Set a timer when start
 function timer(){
-    var minutesLabel = $('#minutes');
-    var secondsLabel = $('#seconds');
+    let minutesLabel = $('#minutes');
+    let secondsLabel = $('#seconds');
     setInterval(setTime, 1000);
 
     function setTime()
@@ -83,7 +83,7 @@ function timer(){
 
     function pad(val)
     {
-        var valString = val + "";
+        let valString = val + "";
         if(valString.length < 2)
         {
             return "0" + valString;
@@ -95,16 +95,16 @@ function timer(){
     }
 }
 
-var totalSeconds = 0;
-var count = 0;
-var total = 0;
-var star = 3;
+let totalSeconds = 0;
+let count = 0;
+let total = 0;
+let star = 3;
 
 
 $(function () {
     shuffleCards();
     timer();
-    var former = [];
+    let former = [];
 
     $('.restart').on('click', function () {
        $('.deck li').removeClass().addClass('card');
@@ -118,31 +118,35 @@ $(function () {
     });
 
     $('.card').on('click', function () {
-        var currentPic = $(this);
-        displayPic(currentPic);
-        if(former.length === 0){
-            storeFormer(former, currentPic);
-        }else{
-            if(currentPic.index() !== former[0]){
-                var formerPic = $('.card').eq(former[0]);
+        let currentPic = $(this);
+        if(!currentPic.hasClass('match')) {
+            displayPic(currentPic);
+            if(former.length === 0){
+                storeFormer(former, currentPic);
+                $('.moves').text(++ total);
+            }else{
+                if(currentPic.index() !== former[0]){
+                    let formerPic = $('.card').eq(former[0]);
 
-                if(currentPic.children().attr('class') === former[1]) match(currentPic, formerPic);
+                    if(currentPic.children().attr('class') === former[1]) match(currentPic, formerPic);
 
-                setTimeout(function(){
-                    notMatch(currentPic, formerPic, former);
-                }, 200);
+                    setTimeout(function(){
+                        notMatch(currentPic, formerPic, former);
+                    }, 200);
+                    $('.moves').text(++ total);
+                }
+            }
+
+            if(total === 20 || total === 30){
+                removeStar();
+            }
+
+            if(count === 8){
+                success();
             }
         }
 
-        $('.moves').text(++ total);
 
-        if(total === 20 || total === 30 || total === 40){
-           removeStar();
-        }
-
-        if(count === 8){
-            success();
-        }
 
     });
 
